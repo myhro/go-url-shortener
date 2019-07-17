@@ -76,6 +76,11 @@ func newURL(c *gin.Context) {
 			"error": err.Error(),
 		})
 		return
+	} else if u.Full == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Empty URL",
+		})
+		return
 	}
 
 	var last int

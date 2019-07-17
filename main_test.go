@@ -11,6 +11,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEmptyURL(t *testing.T) {
+	setupDB(":memory:")
+	router := gin.New()
+	setupRouter(router)
+
+	w := httptest.NewRecorder()
+	body := []byte(`{"wrong": "field"}`)
+	req, err := http.NewRequest("POST", "/", bytes.NewReader(body))
+	if err != nil {
+		t.Error(err)
+	}
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "Empty URL")
+}
+
 func TestIndex(t *testing.T) {
 	router := gin.New()
 	setupRouter(router)

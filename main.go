@@ -113,6 +113,22 @@ func newURL(c *gin.Context) {
 	})
 }
 
+func setupDB(dbFile string) {
+	var err error
+	db, err = sql.Open("sqlite3", dbFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	migrate()
+}
+
+func setupRouter(r *gin.Engine) {
+	r.GET("/", index)
+	r.GET("/:hash", shortURL)
+	r.GET("/:hash/details", details)
+	r.POST("/", newURL)
+}
+
 func shortURL(c *gin.Context) {
 	var u URL
 
@@ -137,17 +153,9 @@ func main() {
 	if dbFile == "" {
 		dbFile = "urls.db"
 	}
-	var err error
-	db, err = sql.Open("sqlite3", dbFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	migrate()
+	setupDB(dbFile)
 
 	r := gin.Default()
-	r.GET("/", index)
-	r.GET("/:hash", shortURL)
-	r.GET("/:hash/details", details)
-	r.POST("/", newURL)
+	setupRouter(r)
 	r.Run()
 }

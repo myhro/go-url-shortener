@@ -14,6 +14,7 @@ import (
 
 var db *sql.DB
 
+// URL is the main resource
 type URL struct {
 	ID   int
 	Hash string
